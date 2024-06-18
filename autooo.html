@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="5"> 
+    <title>จอในรถไฟฟ้า</title>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("เบราว์เซอร์ของคุณไม่รองรับการรับตำแหน่งที่ตั้ง.");
+            }
+        }
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            document.getElementById('location').innerHTML = 'ตำแหน่งของคุณ: ละติจูด ' + latitude + ', ลองจิจูด ' + longitude;
+            showImage(latitude, longitude);
+        }
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("การขออนุญาตเข้าถึงตำแหน่งถูกปฏิเสธ.")
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("ข้อมูลตำแหน่งที่ตั้งไม่สามารถใช้ได้.")
+                    break;
+                case error.TIMEOUT:
+                    alert("การขอข้อมูลตำแหน่งที่ตั้งหมดเวลา.")
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("เกิดข้อผิดพลาดไม่ทราบสาเหตุ.")
+                    break;
+            }
+        }
+        function showImage(latitude, longitude) {
+            var data = [
+                { id: 1, name: 'รังสิต', lat: 13.9987, lon: 100.6185, image: '2.gif'  }, 
+                { id: 2, name: 'หลักหก', lat: 13.9730, lon: 100.6016, image: '3.gif'  }, 
+		{ id: 3, name: 'ดอนเมือง', lat: 13.9125, lon: 100.6010, image: '4.gif'  }, 
+		{ id: 4, name: 'การเคหะ', lat: 13.9122, lon: 100.5892, image: '5.gif'  }, 
+		{ id: 5, name: 'หลักสี่', lat: 13.8722, lon: 100.5742, image: '6.gif'  }, 
+		{ id: 6, name: 'ทุ่งสองห้อง', lat: 13.8656, lon: 100.5564, image: '7.gif'  }, 
+		{ id: 7, name: 'บางเขน', lat: 13.8745, lon: 100.5529, image: '8.gif'  }, 
+		{ id: 8, name: 'วัดเสมียนนารี', lat: 13.8378, lon: 100.5602, image: '9.gif'  }, 
+		{ id: 9, name: 'จตุจักร', lat: 13.8186, lon: 100.5496, image: '10.gif'  }, 
+		{ id: 10, name: 'บางซื่อ', lat: 13.8068, lon: 100.5371, image: '11.gif'  }, 
+		{ id: 11, name: 'บางซ่อน', lat: 13.8747, lon: 100.5787, image: '12.gif'  }, 
+		{ id: 12, name: 'บางบำหรุ', lat: 13.6245, lon: 100.4139, image: '13.gif'  }, 
+		{ id: 13, name: 'ตลิ่งชัน', lat: 13.7994, lon: 100.4353, image: '14.gif'  }, 
+            ];
+            var imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = '';
+            for (var i = 0; i < data.length; i++) {
+                var distance = calculateDistance(latitude, longitude, data[i].lat, data[i].lon);
+                if (distance < 0.1) {
+                    var img = document.createElement('img');
+                    img.src = data[i].image;
+                    imageContainer.appendChild(img);
+                    break;
+                }
+            }
+        }
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            var R = 6371;
+            var dLat = toRad(lat2 - lat1);
+            var dLon = toRad(lon2 - lon1);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;
+            return d;
+        }
+        function toRad(value) {
+            return value * Math.PI / 180;
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="getLocation()">   
+<center> 
+<div id="location"></div>
+<div id="imageContainer" width="100%"></div>
+</center>
+</body>
+</html>
